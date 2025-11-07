@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Портфолио Графического Дизайнера</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --light: #ffffff;
+            --gold: #f9a825;
+            --text: #f1f1f1;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--secondary);
+            color: var(--light);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--gold);
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .language-switcher button {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .language-switcher button.active {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 5rem 0 3rem;
+            display: none;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 500px;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #bdc3c7;
+            font-weight: 300;
+        }
+
+        .hero-highlight {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background: #e6951d;
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            width: 40%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Декоративные элементы */
+        .decoration {
+            position: absolute;
+            z-index: 0;
+        }
+
+        .decoration.top-left {
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--gold);
+            transform: rotate(45deg);
+        }
+
+        .decoration.bottom-right {
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--gold);
+            transform: rotate(45deg);
+        }
+
+        /* Галерея */
+        .gallery {
+            padding: 2rem 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            aspect-ratio: 4/3;
+            background-color: #1e1e30;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Обо мне */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Контакты */
+        .contact-form {
+            max-width: 600px;
+            margin: 2rem auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.8rem;
+            border: 1px solid #343a40;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #1e1e30;
+            color: var(--text);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--gold);
+            color: var(--primary);
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        .submit-btn:hover {
+            background: #e6951d;
+        }
+
+        footer {
+            background: var(--secondary);
+            color: var(--text);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .social-icon:hover {
+            color: var(--gold);
+        }
+
+        .scroll-down {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            color: var(--gold);
+            font-size: 0.8rem;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .scroll-down:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-content {
+                margin-bottom: 2rem;
+                max-width: 100%;
+            }
+            
+            .hero-image {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            nav {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+                justify-content: center;
+            }
+            .language-switcher {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#home" class="nav-link active">HOME</a>
+                <a href="#about" class="nav-link">ABOUT</a>
+                <a href="#portfolio" class="nav-link">PORTFOLIO</a>
+                <a href="#blog" class="nav-link">BLOG</a>
+                <a href="#contact" class="nav-link">CONTACT</a>
+                <div class="language-switcher">
+                    <button class="lang-btn active">RUS</button>
+                    <button class="lang-btn">ENG</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Главная секция -->
+    <section id="home" class="active">
+        <div class="container">
+            <div class="hero">
+                <div class="decoration top-left"></div>
+                <div class="decoration bottom-right"></div>
+                
+                <div class="hero-content">
+                    <span style="color: var(--gold); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 0.5rem; display: block;">HELLO</span>
+                    <h1 class="hero-title">I'm <span class="hero-highlight">Anna Petrova</span></h1>
+                    <p class="hero-subtitle">Графический дизайнер, иллюстратор и визуальный стратег с опытом работы в брендинге, упаковке и цифровом дизайне.</p>
+                    <a href="#contact" class="btn">СВЯЗАТЬСЯ СО МНОЙ</a>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80" alt="Анна Петрова - Графический дизайнер">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Портфолио -->
+    <section id="portfolio">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.2rem; color: var(--light);">Мои работы</h2>
+            <div class="gallery">
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="Брендинг для кафе" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1551650971-8dd8922d7c2c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="Упаковка продукта" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593b8?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="Логотип компании" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="Иллюстрация" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1559028006-87a203ee8758?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="Печатные материалы" class="gallery-img">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1559028013-980b82daabc2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=400&w=600" alt="UI/UX дизайн" class="gallery-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Обо мне -->
+    <section id="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 style="margin-bottom: 1.5rem; font-size: 2.2rem; color: var(--light);">Обо мне</h2>
+                <p>Я — графический дизайнер из Москвы, специализируюсь на создании эмоциональных визуальных решений, которые рассказывают истории брендов. Моя работа — это сочетание тонкого чувства цвета, гармоничной композиции и глубокого понимания целевой аудитории.</p>
+                <p>Работала с такими компаниями, как «Сбер», «Яндекс», «Леруа Мерлен», а также с десятками стартапов и частных клиентов по всему миру.</p>
+                <p>В свободное время рисую акварелью, преподаю дизайн в онлайн-школе и пишу статьи о типографике. Мне нравится создавать не просто красивые вещи, а решения, которые вызывают эмоции и заставляют людей задуматься.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блог -->
+    <section id="blog">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.2rem; color: var(--light);">Блог</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="background: #1e1e30; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3 style="color: var(--gold); margin-bottom: 0.5rem;">Как выбрать цветовую палитру для бренда</h3>
+                    <p style="color: #bdc3c7; margin-bottom: 1rem;">Цвета — это эмоции. В этой статье я делюсь своим подходом к подбору цветовой палитры, который помогает создавать запоминающиеся бренды.</p>
+                    <span style="font-size: 0.8rem; color: #7f8c8d;">7 ноября 2025</span>
+                </div>
+                <div style="background: #1e1e30; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3 style="color: var(--gold); margin-bottom: 0.5rem;">Топ-5 инструментов для создания иллюстраций в 2025 году</h3>
+                    <p style="color: #bdc3c7; margin-bottom: 1rem;">Обзор лучших инструментов для создания иллюстраций, которые я использую в своей работе и рекомендую начинающим дизайнерам.</p>
+                    <span style="font-size: 0.8rem; color: #7f8c8d;">15 октября 2025</span>
+                </div>
+                <div style="background: #1e1e30; padding: 2rem; border-radius: 8px;">
+                    <h3 style="color: var(--gold); margin-bottom: 0.5rem;">Почему важно работать с пробелами в дизайне</h3>
+                    <p style="color: #bdc3c7; margin-bottom: 1rem;">Пробелы — это не пустота, а важный элемент композиции. В этой статье я объясняю, как правильно использовать пространство в дизайне.</p>
+                    <span style="font-size: 0.8rem; color: #7f8c8d;">3 сентября 2025</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contact">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2.2rem; color: var(--light);">Связаться со мной</h2>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Сообщение</label>
+                    <textarea id="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Отправить сообщение</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Анна Петрова. Все права защищены.</p>
+            <div class="footer-social">
+                <a href="#" class="social-icon">📧</a>
+                <a href="#" class="social-icon">🐦</a>
+                <a href="#" class="social-icon">📷</a>
+                <a href="#" class="social-icon">💼</a>
+            </div>
+            <div class="scroll-down">SCROLL DOWN</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+            const langButtons = document.querySelectorAll('.lang-btn');
+
+            // Переключение секций
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Убираем активный класс у всех
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(sec => sec.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущей ссылке
+                    this.classList.add('active');
+                    
+                    // Показываем нужную секцию
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            // Отправка формы
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Спасибо за ваше сообщение! Я отвечу вам в ближайшее время.');
+                    contactForm.reset();
+                });
+            }
+
+            // Прокрутка к якорям без перезагрузки
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Переключение языков
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    // Здесь можно добавить функционал переключения языка
+                });
+            });
+
+            // Прокрутка вниз
+            document.querySelector('.scroll-down').addEventListener('click', function() {
+                window.scrollTo({
+                    top: window.innerHeight,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
