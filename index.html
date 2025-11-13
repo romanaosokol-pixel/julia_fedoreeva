@@ -446,6 +446,34 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
+        /* Game Section */
+        #game {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        #gameCanvas {
+            border: 3px solid var(--gold);
+            border-radius: 8px;
+            background: #0c0c1a;
+            margin: 1rem auto;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .game-score {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .hero {
@@ -493,6 +521,10 @@
             .section-title {
                 font-size: 1.8rem;
             }
+            #gameCanvas {
+                width: 95%;
+                height: 300px;
+            }
         }
     </style>
 </head>
@@ -507,6 +539,7 @@
                 <a href="#about" class="nav-link">ABOUT</a>
                 <a href="#portfolio" class="nav-link">PORTFOLIO</a>
                 <a href="#blog" class="nav-link">BLOG</a>
+                <a href="#game" class="nav-link">GAME</a>
                 <a href="#contact" class="nav-link">CONTACT</a>
                 <div class="language-switcher">
                     <button class="lang-btn active">RUS</button>
@@ -596,6 +629,19 @@
                     <p>Пробелы — это не пустота, а важный элемент композиции. В этой статье я объясняю, как правильно использовать пространство в дизайне.</p>
                     <span class="post-date">3 сентября 2025</span>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Игра -->
+    <section id="game" class="fade-in">
+        <div class="container">
+            <h2 class="section-title">Nyan Ball Game</h2>
+            <div class="game-score">Score: <span id="score">0</span></div>
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <div class="game-controls">
+                <button id="startBtn" class="btn">Start Game</button>
+                <button id="restartBtn" class="btn">Restart</button>
             </div>
         </div>
     </section>
@@ -743,7 +789,218 @@
             document.querySelectorAll('section').forEach(section => {
                 observer.observe(section);
             });
+
+            // === ИГРА ===
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const scoreElement = document.getElementById('score');
+            const startBtn = document.getElementById('startBtn');
+            const restartBtn = document.getElementById('restartBtn');
+
+            // Настройки игры
+            let gameRunning = false;
+            let score = 0;
+            let animationId;
+
+            // Игрок
+            const player = {
+                x: 50,
+                y: canvas.height / 2 - 15,
+                radius: 15,
+                color: '#ff00ff',
+                trail: []
+            };
+
+            // Препятствия
+            let obstacles = [];
+            const obstacleColors = ['#ff5252', '#4caf50', '#2196f3', '#ff9800', '#9c27b0'];
+            const maxObstacles = 8;
+
+            // Полосы радуги для фона (Nyan Cat стиль)
+            const rainbowStripes = ['#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#9900ff', '#ff00ff'];
+            let rainbowOffset = 0;
+
+            // Управление
+            let keys = {};
+            window.addEventListener('keydown', (e) => {
+                keys[e.key] = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                keys[e.key] = false;
+            });
+
+            // Инициализация игры
+            function initGame() {
+                score = 0;
+                scoreElement.textContent = score;
+                obstacles = [];
+                player.trail = [];
+                gameRunning = true;
+            }
+
+            // Создание препятствия
+            function createObstacle() {
+                if (obstacles.length >= maxObstacles) return;
+                const color = obstacleColors[Math.floor(Math.random() * obstacleColors.length)];
+                obstacles.push({
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - 40) + 20,
+                    width: 20 + Math.random() * 20,
+                    height: 20 + Math.random() * 20,
+                    speed: 3 + Math.random() * 3,
+                    color: color
+                });
+            }
+
+            // Обновление игры
+            function update() {
+                if (!gameRunning) return;
+
+                // Обновление позиции игрока
+                if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+                    player.y -= 5;
+                }
+                if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+                    player.y += 5;
+                }
+
+                // Ограничение движения игрока в пределах canvas
+                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+
+                // Добавление следа
+                player.trail.push({x: player.x, y: player.y});
+                if (player.trail.length > 10) {
+                    player.trail.shift();
+                }
+
+                // Создание новых препятствий
+                if (Math.random() < 0.03) {
+                    createObstacle();
+                }
+
+                // Обновление препятствий
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    obstacles[i].x -= obstacles[i].speed;
+                    
+                    // Удаление препятствий, вышедших за пределы
+                    if (obstacles[i].x + obstacles[i].width < 0) {
+                        obstacles.splice(i, 1);
+                        score += 10;
+                        scoreElement.textContent = score;
+                        continue;
+                    }
+
+                    // Проверка столкновения
+                    const dx = player.x - (obstacles[i].x + obstacles[i].width / 2);
+                    const dy = player.y - (obstacles[i].y + obstacles[i].height / 2);
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < player.radius + Math.max(obstacles[i].width, obstacles[i].height) / 2) {
+                        gameOver();
+                        return;
+                    }
+                }
+
+                // Обновление радужного фона
+                rainbowOffset = (rainbowOffset + 0.5) % rainbowStripes.length;
+            }
+
+            // Отрисовка игры
+            function draw() {
+                // Очистка canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Радужный фон
+                for (let i = 0; i < canvas.width; i += 10) {
+                    const stripeIndex = Math.floor((i / 10 + rainbowOffset) % rainbowStripes.length);
+                    ctx.fillStyle = rainbowStripes[stripeIndex];
+                    ctx.fillRect(i, 0, 10, canvas.height);
+                }
+
+                // Отрисовка следа игрока
+                for (let i = 0; i < player.trail.length; i++) {
+                    const alpha = i / player.trail.length;
+                    ctx.beginPath();
+                    ctx.arc(player.trail[i].x, player.trail[i].y, player.radius * alpha, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 0, 255, ${alpha * 0.5})`;
+                    ctx.fill();
+                }
+
+                // Отрисовка игрока (шарик в стиле Nyan Cat)
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+                ctx.fillStyle = player.color;
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Добавление глаз
+                ctx.beginPath();
+                ctx.arc(player.x - 5, player.y - 3, 3, 0, Math.PI * 2);
+                ctx.arc(player.x + 5, player.y - 3, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+
+                // Отрисовка препятствий
+                obstacles.forEach(obstacle => {
+                    ctx.fillStyle = obstacle.color;
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    
+                    // Добавление эффекта свечения
+                    ctx.shadowColor = obstacle.color;
+                    ctx.shadowBlur = 10;
+                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                    ctx.shadowBlur = 0;
+                });
+            }
+
+            // Игровой цикл
+            function gameLoop() {
+                update();
+                draw();
+                if (gameRunning) {
+                    animationId = requestAnimationFrame(gameLoop);
+                }
+            }
+
+            // Завершение игры
+            function gameOver() {
+                gameRunning = false;
+                cancelAnimationFrame(animationId);
+                alert(`Игра окончена! Ваш счёт: ${score}`);
+            }
+
+            // Обработчики кнопок
+            startBtn.addEventListener('click', () => {
+                if (!gameRunning) {
+                    initGame();
+                    gameLoop();
+                }
+            });
+
+            restartBtn.addEventListener('click', () => {
+                if (gameRunning) {
+                    cancelAnimationFrame(animationId);
+                }
+                initGame();
+                gameLoop();
+            });
+
+            // Инициализация canvas размеров при изменении окна
+            function resizeCanvas() {
+                if (window.innerWidth <= 768) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = 300;
+                } else {
+                    canvas.width = 800;
+                    canvas.height = 400;
+                }
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
         });
     </script>
 </body>
 </html>
+
