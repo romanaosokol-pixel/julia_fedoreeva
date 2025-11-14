@@ -85,20 +85,21 @@
             display: flex;
             gap: 0.5rem;
             margin-left: auto;
+            align-items: center;
         }
 
-        .language-switcher button {
-            background: transparent;
-            border: none;
-            color: var(--light);
+        .language-switcher img {
+            width: 24px;
+            height: 16px;
             cursor: pointer;
-            font-size: 0.8rem;
-            padding: 0.2rem 0.5rem;
+            border: 2px solid transparent;
+            border-radius: 2px;
+            transition: border-color 0.3s;
         }
 
-        .language-switcher button.active {
-            color: var(--gold);
-            text-decoration: underline;
+        .language-switcher img.active {
+            border-color: var(--gold);
+            border-radius: 3px;
         }
 
         /* Sections */
@@ -357,7 +358,7 @@
         .social-icon {
             color: var(--text);
             text-decoration: none;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: color 0.3s;
         }
 
@@ -446,7 +447,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* Game Section */
+        /* Tic Tac Toe Game */
         #game {
             display: flex;
             flex-direction: column;
@@ -455,23 +456,53 @@
             padding: 2rem 0;
         }
 
-        #gameCanvas {
-            border: 3px solid var(--gold);
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 8px;
+            margin: 2rem auto;
+            max-width: 400px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: #1e1e30;
+            border: 2px solid var(--gold);
             border-radius: 8px;
-            background: #0c0c1a;
-            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cell:hover {
+            background: #2a2a40;
+            transform: translateY(-2px);
+        }
+
+        .cell.x {
+            color: var(--gold);
+        }
+
+        .cell.o {
+            color: var(--accent);
+        }
+
+        .game-status {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+            text-align: center;
         }
 
         .game-controls {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
-        }
-
-        .game-score {
-            font-size: 1.5rem;
-            color: var(--gold);
-            margin-bottom: 1rem;
         }
 
         /* Responsive */
@@ -521,9 +552,10 @@
             .section-title {
                 font-size: 1.8rem;
             }
-            #gameCanvas {
-                width: 95%;
-                height: 300px;
+            .cell {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -542,8 +574,8 @@
                 <a href="#game" class="nav-link">GAME</a>
                 <a href="#contact" class="nav-link">CONTACT</a>
                 <div class="language-switcher">
-                    <button class="lang-btn active">RUS</button>
-                    <button class="lang-btn">ENG</button>
+                    <img src="image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDEwMDAgNjAwIj48cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNmZmYiLz48cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIyMDAiIHk9IjIwMCIgZmlsbD0iIzAwMCIvPjxyZWN0IHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjIwMCIgeT0iNDAwIiBmaWxsPSIjcmVkIi8+PC9zdmc+" alt="Русский" class="lang-flag active" data-lang="ru">
+                    <img src="image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDEwMDAgNjAwIj48cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNmZmYiLz48cmVjdCB3aWR0aD0iMTAwMCIgaGVpZ2h0PSIyMDAiIHk9IjIwMCIgZmlsbD0iIzAwMjQ3ZCIvPjxyZWN0IHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjIwMCIgeT0iNDAwIiBmaWxsPSIjY2YxNDJiIi8+PHBhdGggZD0iTTAgMGgxMDAwdjYwMEgweiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0wIDBoMzMzLjN2NjAwSDB6IiBmaWxsPSIjMDAyNDdkIi8+PHBhdGggZD0iTTAgMGgxMDAwdjIwMEgweiIgZmlsbD0iI2NmMTQyYiIvPjxwYXRoIGQ9Ik02NjYuNyAwaDMzMy4zdjIwMEg2NjYuN3oiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNNTAwIDMwMGwtMTY2LjYgMTUwTDUwMCA2MDBsMTY2LjYtMTUwTDUwMCAzMDB6IiBmaWxsPSIjMDAyNDdkIi8+PC9zdmc+" alt="English" class="lang-flag" data-lang="en">
                 </div>
             </nav>
         </div>
@@ -636,12 +668,21 @@
     <!-- Игра -->
     <section id="game" class="fade-in">
         <div class="container">
-            <h2 class="section-title">Nyan Ball Game</h2>
-            <div class="game-score">Score: <span id="score">0</span></div>
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <h2 class="section-title">Крестики-Нолики</h2>
+            <div class="game-status" id="gameStatus">Ваш ход: X</div>
+            <div class="game-board" id="gameBoard">
+                <div class="cell" data-cell-index="0"></div>
+                <div class="cell" data-cell-index="1"></div>
+                <div class="cell" data-cell-index="2"></div>
+                <div class="cell" data-cell-index="3"></div>
+                <div class="cell" data-cell-index="4"></div>
+                <div class="cell" data-cell-index="5"></div>
+                <div class="cell" data-cell-index="6"></div>
+                <div class="cell" data-cell-index="7"></div>
+                <div class="cell" data-cell-index="8"></div>
+            </div>
             <div class="game-controls">
-                <button id="startBtn" class="btn">Start Game</button>
-                <button id="restartBtn" class="btn">Restart</button>
+                <button id="restartBtn" class="btn">Новая игра</button>
             </div>
         </div>
     </section>
@@ -672,10 +713,27 @@
         <div class="container">
             <p>&copy; 2025 Юлия Федореева. Все права защищены.</p>
             <div class="footer-social">
-                <a href="#" class="social-icon">📧</a>
-                <a href="#" class="social-icon">🐦</a>
-                <a href="#" class="social-icon">📷</a>
-                <a href="#" class="social-icon">💼</a>
+                <a href="https://www.behance.net/" target="_blank" class="social-icon" title="Behance">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.58 21.58H2.42V9.42H6.42V17.58H17.58V21.58ZM10.42 12.58H6.42V9.42H10.42V12.58ZM14.42 9.42V17.58H17.58V9.42H14.42Z" fill="#0057FF"/>
+                    </svg>
+                </a>
+                <a href="https://dribbble.com/" target="_blank" class="social-icon" title="Dribbble">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.16C8.73 2.16 6 4.89 6 8.25S8.73 14.34 12 14.34S18 11.61 18 8.25S15.27 2.16 12 2.16ZM12 12.34C11.17 12.34 10.38 12.13 9.68 11.76C9.39 11.6 9.22 11.51 9.16 11.47C9.11 11.44 9.08 11.42 9.06 11.41C9.04 11.4 9.03 11.39 9.02 11.39C9.01 11.39 9.01 11.39 9 11.39C8.99 11.39 8.98 11.39 8.97 11.4C8.96 11.4 8.95 11.41 8.94 11.41C8.93 11.42 8.92 11.43 8.91 11.43C8.9 11.44 8.89 11.45 8.88 11.46C8.87 11.47 8.86 11.48 8.85 11.49C8.84 11.5 8.83 11.51 8.82 11.52C8.81 11.53 8.8 11.54 8.79 11.55C8.78 11.56 8.77 11.57 8.76 11.58C8.75 11.59 8.74 11.6 8.73 11.61C8.72 11.62 8.71 11.63 8.7 11.64C8.69 11.65 8.68 11.66 8.67 11.67C8.66 11.68 8.65 11.69 8.64 11.7C8.63 11.71 8.62 11.72 8.61 11.73C8.6 11.74 8.59 11.75 8.58 11.76C8.57 11.77 8.56 11.78 8.55 11.79C8.54 11.8 8.53 11.81 8.52 11.82C8.51 11.83 8.5 11.84 8.49 11.85C8.48 11.86 8.47 11.87 8.46 11.88C8.45 11.89 8.44 11.9 8.43 11.91C8.42 11.92 8.41 11.93 8.4 11.94C8.39 11.95 8.38 11.96 8.37 11.97C8.36 11.98 8.35 11.99 8.34 12C8.33 12.01 8.32 12.02 8.31 12.03C8.3 12.04 8.29 12.05 8.28 12.06C8.27 12.07 8.26 12.08 8.25 12.09C8.24 12.1 8.23 12.11 8.22 12.12C8.21 12.13 8.2 12.14 8.19 12.15C8.18 12.16 8.17 12.17 8.16 12.18C8.15 12.19 8.14 12.2 8.13 12.21C8.12 12.22 8.11 12.23 8.1 12.24C8.09 12.25 8.08 12.26 8.07 12.27C8.06 12.28 8.05 12.29 8.04 12.3C8.03 12.31 8.02 12.32 8.01 12.33C8 12.34 7.99 12.35 7.98 12.36C7.97 12.37 7.96 12.38 7.95 12.39C7.94 12.4 7.93 12.41 7.92 12.42C7.91 12.43 7.9 12.44 7.89 12.45C7.88 12.46 7.87 12.47 7.86 12.48C7.85 12.49 7.84 12.5 7.83 12.51C7.82 12.52 7.81 12.53 7.8 12.54C7.79 12.55 7.78 12.56 7.77 12.57C7.76 12.58 7.75 12.59 7.74 12.6C7.73 12.61 7.72 12.62 7.71 12.63C7.7 12.64 7.69 12.65 7.68 12.66C7.67 12.67 7.66 12.68 7.65 12.69C7.64 12.7 7.63 12.71 7.62 12.72C7.61 12.73 7.6 12.74 7.59 12.75C7.58 12.76 7.57 12.77 7.56 12.78C7.55 12.79 7.54 12.8 7.53 12.81C7.52 12.82 7.51 12.83 7.5 12.84C7.49 12.85 7.48 12.86 7.47 12.87C7.46 12.88 7.45 12.89 7.44 12.9C7.43 12.91 7.42 12.92 7.41 12.93C7.4 12.94 7.39 12.95 7.38 12.96C7.37 12.97 7.36 12.98 7.35 12.99C7.34 13 7.33 13.01 7.32 13.02C7.31 13.03 7.3 13.04 7.29 13.05C7.28 13.06 7.27 13.07 7.26 13.08C7.25 13.09 7.24 13.1 7.23 13.11C7.22 13.12 7.21 13.13 7.2 13.14C7.19 13.15 7.18 13.16 7.17 13.17C7.16 13.18 7.15 13.19 7.14 13.2C7.13 13.21 7.12 13.22 7.11 13.23C7.1 13.24 7.09 13.25 7.08 13.26C7.07 13.27 7.06 13.28 7.05 13.29C7.04 13.3 7.03 13.31 7.02 13.32C7.01 13.33 7 13.34 6.99 13.35C6.98 13.36 6.97 13.37 6.96 13.38C6.95 13.39 6.94 13.4 6.93 13.41C6.92 13.42 6.91 13.43 6.9 13.44C6.89 13.45 6.88 13.46 6.87 13.47C6.86 13.48 6.85 13.49 6.84 13.5C6.83 13.51 6.82 13.52 6.81 13.53C6.8 13.54 6.79 13.55 6.78 13.56C6.77 13.57 6.76 13.58 6.75 13.59C6.74 13.6 6.73 13.61 6.72 13.62C6.71 13.63 6.7 13.64 6.69 13.65C6.68 13.66 6.67 13.67 6.66 13.68C6.65 13.69 6.64 13.7 6.63 13.71C6.62 13.72 6.61 13.73 6.6 13.74C6.59 13.75 6.58 13.76 6.57 13.77C6.56 13.78 6.55 13.79 6.54 13.8C6.53 13.81 6.52 13.82 6.51 13.83C6.5 13.84 6.49 13.85 6.48 13.86C6.47 13.87 6.46 13.88 6.45 13.89C6.44 13.9 6.43 13.91 6.42 13.92C6.41 13.93 6.4 13.94 6.39 13.95C6.38 13.96 6.37 13.97 6.36 13.98C6.35 13.99 6.34 14 6.33 14.01C6.32 14.02 6.31 14.03 6.3 14.04C6.29 14.05 6.28 14.06 6.27 14.07C6.26 14.08 6.25 14.09 6.24 14.1C6.23 14.11 6.22 14.12 6.21 14.13C6.2 14.14 6.19 14.15 6.18 14.16C6.17 14.17 6.16 14.18 6.15 14.19C6.14 14.2 6.13 14.21 6.12 14.22C6.11 14.23 6.1 14.24 6.09 14.25C6.08 14.26 6.07 14.27 6.06 14.28C6.05 14.29 6.04 14.3 6.03 14.31C6.02 14.32 6.01 14.33 6 14.34" fill="#EA4C88"/>
+                    </svg>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="social-icon" title="Instagram">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.16C8.73 2.16 6 4.89 6 8.25S8.73 14.34 12 14.34S18 11.61 18 8.25S15.27 2.16 12 2.16ZM12 12.34C11.17 12.34 10.38 12.13 9.68 11.76C9.39 11.6 9.22 11.51 9.16 11.47C9.11 11.44 9.08 11.42 9.06 11.41C9.04 11.4 9.03 11.39 9.02 11.39C9.01 11.39 9.01 11.39 9 11.39C8.99 11.39 8.98 11.39 8.97 11.4C8.96 11.4 8.95 11.41 8.94 11.41C8.93 11.42 8.92 11.43 8.91 11.43C8.9 11.44 8.89 11.45 8.88 11.46C8.87 11.47 8.86 11.48 8.85 11.49C8.84 11.5 8.83 11.51 8.82 11.52C8.81 11.53 8.8 11.54 8.79 11.55C8.78 11.56 8.77 11.57 8.76 11.58C8.75 11.59 8.74 11.6 8.73 11.61C8.72 11.62 8.71 11.63 8.7 11.64C8.69 11.65 8.68 11.66 8.67 11.67C8.66 11.68 8.65 11.69 8.64 11.7C8.63 11.71 8.62 11.72 8.61 11.73C8.6 11.74 8.59 11.75 8.58 11.76C8.57 11.77 8.56 11.78 8.55 11.79C8.54 11.8 8.53 11.81 8.52 11.82C8.51 11.83 8.5 11.84 8.49 11.85C8.48 11.86 8.47 11.87 8.46 11.88C8.45 11.89 8.44 11.9 8.43 11.91C8.42 11.92 8.41 11.93 8.4 11.94C8.39 11.95 8.38 11.96 8.37 11.97C8.36 11.98 8.35 11.99 8.34 12C8.33 12.01 8.32 12.02 8.31 12.03C8.3 12.04 8.29 12.05 8.28 12.06C8.27 12.07 8.26 12.08 8.25 12.09C8.24 12.1 8.23 12.11 8.22 12.12C8.21 12.13 8.2 12.14 8.19 12.15C8.18 12.16 8.17 12.17 8.16 12.18C8.15 12.19 8.14 12.2 8.13 12.21C8.12 12.22 8.11 12.23 8.1 12.24C8.09 12.25 8.08 12.26 8.07 12.27C8.06 12.28 8.05 12.29 8.04 12.3C8.03 12.31 8.02 12.32 8.01 12.33C8 12.34 7.99 12.35 7.98 12.36C7.97 12.37 7.96 12.38 7.95 12.39C7.94 12.4 7.93 12.41 7.92 12.42C7.91 12.43 7.9 12.44 7.89 12.45C7.88 12.46 7.87 12.47 7.86 12.48C7.85 12.49 7.84 12.5 7.83 12.51C7.82 12.52 7.81 12.53 7.8 12.54C7.79 12.55 7.78 12.56 7.77 12.57C7.76 12.58 7.75 12.59 7.74 12.6C7.73 12.61 7.72 12.62 7.71 12.63C7.7 12.64 7.69 12.65 7.68 12.66C7.67 12.67 7.66 12.68 7.65 12.69C7.64 12.7 7.63 12.71 7.62 12.72C7.61 12.73 7.6 12.74 7.59 12.75C7.58 12.76 7.57 12.77 7.56 12.78C7.55 12.79 7.54 12.8 7.53 12.81C7.52 12.82 7.51 12.83 7.5 12.84C7.49 12.85 7.48 12.86 7.47 12.87C7.46 12.88 7.45 12.89 7.44 12.9C7.43 12.91 7.42 12.92 7.41 12.93C7.4 12.94 7.39 12.95 7.38 12.96C7.37 12.97 7.36 12.98 7.35 12.99C7.34 13 7.33 13.01 7.32 13.02C7.31 13.03 7.3 13.04 7.29 13.05C7.28 13.06 7.27 13.07 7.26 13.08C7.25 13.09 7.24 13.1 7.23 13.11C7.22 13.12 7.21 13.13 7.2 13.14C7.19 13.15 7.18 13.16 7.17 13.17C7.16 13.18 7.15 13.19 7.14 13.2C7.13 13.21 7.12 13.22 7.11 13.23C7.1 13.24 7.09 13.25 7.08 13.26C7.07 13.27 7.06 13.28 7.05 13.29C7.04 13.3 7.03 13.31 7.02 13.32C7.01 13.33 7 13.34 6.99 13.35C6.98 13.36 6.97 13.37 6.96 13.38C6.95 13.39 6.94 13.4 6.93 13.41C6.92 13.42 6.91 13.43 6.9 13.44C6.89 13.45 6.88 13.46 6.87 13.47C6.86 13.48 6.85 13.49 6.84 13.5C6.83 13.51 6.82 13.52 6.81 13.53C6.8 13.54 6.79 13.55 6.78 13.56C6.77 13.57 6.76 13.58 6.75 13.59C6.74 13.6 6.73 13.61 6.72 13.62C6.71 13.63 6.7 13.64 6.69 13.65C6.68 13.66 6.67 13.67 6.66 13.68C6.65 13.69 6.64 13.7 6.63 13.71C6.62 13.72 6.61 13.73 6.6 13.74C6.59 13.75 6.58 13.76 6.57 13.77C6.56 13.78 6.55 13.79 6.54 13.8C6.53 13.81 6.52 13.82 6.51 13.83C6.5 13.84 6.49 13.85 6.48 13.86C6.47 13.87 6.46 13.88 6.45 13.89C6.44 13.9 6.43 13.91 6.42 13.92C6.41 13.93 6.4 13.94 6.39 13.95C6.38 13.96 6.37 13.97 6.36 13.98C6.35 13.99 6.34 14 6.33 14.01C6.32 14.02 6.31 14.03 6.3 14.04C6.29 14.05 6.28 14.06 6.27 14.07C6.26 14.08 6.25 14.09 6.24 14.1C6.23 14.11 6.22 14.12 6.21 14.13C6.2 14.14 6.19 14.15 6.18 14.16C6.17 14.17 6.16 14.18 6.15 14.19C6.14 14.2 6.13 14.21 6.12 14.22C6.11 14.23 6.1 14.24 6.09 14.25C6.08 14.26 6.07 14.27 6.06 14.28C6.05 14.29 6.04 14.3 6.03 14.31C6.02 14.32 6.01 14.33 6 14.34" fill="#E440FF"/>
+                        <circle cx="12" cy="12" r="2.16" fill="#E440FF"/>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/" target="_blank" class="social-icon" title="LinkedIn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 3V21H15V14.5H11V21H7V3H11V9.5H15V3H19ZM15 3V9.5H11V3H15Z" fill="#0077B5"/>
+                    </svg>
+                </a>
             </div>
             <div class="scroll-down">SCROLL DOWN</div>
         </div>
@@ -691,6 +749,200 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // === ЯЗЫКОВЫЕ ДАННЫЕ ===
+            const translations = {
+                ru: {
+                    nav: {
+                        home: "HOME",
+                        about: "ABOUT",
+                        portfolio: "PORTFOLIO",
+                        blog: "BLOG",
+                        game: "GAME",
+                        contact: "CONTACT"
+                    },
+                    hero: {
+                        tag: "HELLO",
+                        title: "I'm <span class=\"hero-highlight\">Julia Fedoreeva</span>",
+                        subtitle: "Графический дизайнер, иллюстратор и визуальный стратег с опытом работы в брендинге, упаковке и цифровом дизайне.",
+                        button: "СВЯЗАТЬСЯ СО МНОЙ"
+                    },
+                    portfolio: {
+                        title: "Мои работы"
+                    },
+                    about: {
+                        title: "Обо мне",
+                        p1: "Я — графический дизайнер из Москвы, специализируюсь на создании эмоциональных визуальных решений, которые рассказывают истории брендов. Моя работа — это сочетание тонкого чувства цвета, гармоничной композиции и глубокого понимания целевой аудитории.",
+                        p2: "Работала с такими компаниями, как «Сбер», «Яндекс», «Леруа Мерлен», а также с десятками стартапов и частных клиентов по всему миру.",
+                        p3: "В свободное время рисую акварелью, преподаю дизайн в онлайн-школе и пишу статьи о типографике. Мне нравится создавать не просто красивые вещи, а решения, которые вызывают эмоции и заставляют людей задуматься."
+                    },
+                    blog: {
+                        title: "Блог",
+                        post1: {
+                            title: "Как выбрать цветовую палитру для бренда",
+                            text: "Цвета — это эмоции. В этой статье я делюсь своим подходом к подбору цветовой палитры, который помогает создавать запоминающиеся бренды."
+                        },
+                        post2: {
+                            title: "Топ-5 инструментов для создания иллюстраций в 2025 году",
+                            text: "Обзор лучших инструментов для создания иллюстраций, которые я использую в своей работе и рекомендую начинающим дизайнерам."
+                        },
+                        post3: {
+                            title: "Почему важно работать с пробелами в дизайне",
+                            text: "Пробелы — это не пустота, а важный элемент композиции. В этой статье я объясняю, как правильно использовать пространство в дизайне."
+                        }
+                    },
+                    game: {
+                        title: "Крестики-Нолики",
+                        status: {
+                            playerTurn: "Ваш ход: X",
+                            computerTurn: "Ход компьютера: O",
+                            win: "Поздравляем! Вы выиграли!",
+                            lose: "Компьютер выиграл!",
+                            draw: "Ничья!"
+                        },
+                        restart: "Новая игра"
+                    },
+                    contact: {
+                        title: "Связаться со мной",
+                        name: "Имя",
+                        email: "Email",
+                        message: "Сообщение",
+                        button: "Отправить сообщение"
+                    },
+                    footer: {
+                        copyright: "&copy; 2025 Юлия Федореева. Все права защищены.",
+                        scroll: "SCROLL DOWN"
+                    }
+                },
+                en: {
+                    nav: {
+                        home: "HOME",
+                        about: "ABOUT",
+                        portfolio: "PORTFOLIO",
+                        blog: "BLOG",
+                        game: "GAME",
+                        contact: "CONTACT"
+                    },
+                    hero: {
+                        tag: "HELLO",
+                        title: "I'm <span class=\"hero-highlight\">Julia Fedoreeva</span>",
+                        subtitle: "Graphic designer, illustrator and visual strategist with experience in branding, packaging and digital design.",
+                        button: "CONTACT ME"
+                    },
+                    portfolio: {
+                        title: "My Works"
+                    },
+                    about: {
+                        title: "About Me",
+                        p1: "I'm a graphic designer from Moscow, specializing in creating emotional visual solutions that tell brand stories. My work is a combination of a subtle sense of color, harmonious composition, and deep understanding of the target audience.",
+                        p2: "I have worked with companies such as Sber, Yandex, Leroy Merlin, as well as dozens of startups and private clients around the world.",
+                        p3: "In my free time, I paint with watercolors, teach design at an online school, and write articles about typography. I enjoy creating not just beautiful things, but solutions that evoke emotions and make people think."
+                    },
+                    blog: {
+                        title: "Blog",
+                        post1: {
+                            title: "How to choose a color palette for a brand",
+                            text: "Colors are emotions. In this article, I share my approach to selecting a color palette that helps create memorable brands."
+                        },
+                        post2: {
+                            title: "Top 5 illustration tools in 2025",
+                            text: "A review of the best illustration tools that I use in my work and recommend to beginner designers."
+                        },
+                        post3: {
+                            title: "Why it's important to work with whitespace in design",
+                            text: "Whitespace is not emptiness, but an important element of composition. In this article, I explain how to properly use space in design."
+                        }
+                    },
+                    game: {
+                        title: "Tic Tac Toe",
+                        status: {
+                            playerTurn: "Your turn: X",
+                            computerTurn: "Computer's turn: O",
+                            win: "Congratulations! You won!",
+                            lose: "Computer wins!",
+                            draw: "It's a draw!"
+                        },
+                        restart: "New Game"
+                    },
+                    contact: {
+                        title: "Contact Me",
+                        name: "Name",
+                        email: "Email",
+                        message: "Message",
+                        button: "Send Message"
+                    },
+                    footer: {
+                        copyright: "&copy; 2025 Julia Fedoreeva. All rights reserved.",
+                        scroll: "SCROLL DOWN"
+                    }
+                }
+            };
+
+            let currentLang = 'ru';
+
+            // === ФУНКЦИЯ ПЕРЕВОДА ===
+            function translatePage(lang) {
+                currentLang = lang;
+                
+                // Навигация
+                document.querySelector('a[href="#home"]').textContent = translations[lang].nav.home;
+                document.querySelector('a[href="#about"]').textContent = translations[lang].nav.about;
+                document.querySelector('a[href="#portfolio"]').textContent = translations[lang].nav.portfolio;
+                document.querySelector('a[href="#blog"]').textContent = translations[lang].nav.blog;
+                document.querySelector('a[href="#game"]').textContent = translations[lang].nav.game;
+                document.querySelector('a[href="#contact"]').textContent = translations[lang].nav.contact;
+                
+                // Hero
+                document.querySelector('.hero-tag').textContent = translations[lang].hero.tag;
+                document.querySelector('.hero-title').innerHTML = translations[lang].hero.title;
+                document.querySelector('.hero-subtitle').textContent = translations[lang].hero.subtitle;
+                document.querySelector('.btn[href="#contact"]').textContent = translations[lang].hero.button;
+                
+                // Portfolio
+                document.querySelector('#portfolio .section-title').textContent = translations[lang].portfolio.title;
+                
+                // About
+                document.querySelector('#about .section-title').textContent = translations[lang].about.title;
+                const aboutP = document.querySelectorAll('#about .about-content p');
+                if (aboutP.length >= 3) {
+                    aboutP[0].textContent = translations[lang].about.p1;
+                    aboutP[1].textContent = translations[lang].about.p2;
+                    aboutP[2].textContent = translations[lang].about.p3;
+                }
+                
+                // Blog
+                document.querySelector('#blog .section-title').textContent = translations[lang].blog.title;
+                const blogPosts = document.querySelectorAll('.blog-post');
+                if (blogPosts.length >= 3) {
+                    blogPosts[0].querySelector('h3').textContent = translations[lang].blog.post1.title;
+                    blogPosts[0].querySelector('p').textContent = translations[lang].blog.post1.text;
+                    blogPosts[1].querySelector('h3').textContent = translations[lang].blog.post2.title;
+                    blogPosts[1].querySelector('p').textContent = translations[lang].blog.post2.text;
+                    blogPosts[2].querySelector('h3').textContent = translations[lang].blog.post3.title;
+                    blogPosts[2].querySelector('p').textContent = translations[lang].blog.post3.text;
+                }
+                
+                // Game
+                document.querySelector('#game .section-title').textContent = translations[lang].game.title;
+                document.getElementById('restartBtn').textContent = translations[lang].game.restart;
+                updateGameStatus(translations[lang].game.status.playerTurn);
+                
+                // Contact
+                document.querySelector('#contact .section-title').textContent = translations[lang].contact.title;
+                document.querySelector('[for="name"]').textContent = translations[lang].contact.name;
+                document.querySelector('[for="email"]').textContent = translations[lang].contact.email;
+                document.querySelector('[for="message"]').textContent = translations[lang].contact.message;
+                document.querySelector('.submit-btn').textContent = translations[lang].contact.button;
+                
+                // Footer
+                document.querySelector('footer p').innerHTML = translations[lang].footer.copyright;
+                document.querySelector('.scroll-down').textContent = translations[lang].footer.scroll;
+                
+                // Обновляем активный флаг
+                document.querySelectorAll('.lang-flag').forEach(flag => {
+                    flag.classList.toggle('active', flag.dataset.lang === lang);
+                });
+            }
+
             // === УНИВЕРСАЛЬНАЯ НАВИГАЦИЯ (работает для всех ссылок #) ===
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
@@ -728,7 +980,9 @@
             if (contactForm) {
                 contactForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    alert('Спасибо за ваше сообщение! Я отвечу вам в ближайшее время.');
+                    alert(currentLang === 'ru' ? 
+                        'Спасибо за ваше сообщение! Я отвечу вам в ближайшее время.' : 
+                        'Thank you for your message! I will reply to you shortly.');
                     contactForm.reset();
                 });
             }
@@ -761,11 +1015,14 @@
                 }
             });
 
-            // === Язык ===
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
+            // === Переключение языка по флагам ===
+            document.querySelectorAll('.lang-flag').forEach(flag => {
+                flag.addEventListener('click', () => {
+                    const lang = flag.dataset.lang;
+                    if (lang !== currentLang) {
+                        translatePage(lang);
+                        resetGame();
+                    }
                 });
             });
 
@@ -790,215 +1047,145 @@
                 observer.observe(section);
             });
 
-            // === ИГРА ===
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            const scoreElement = document.getElementById('score');
-            const startBtn = document.getElementById('startBtn');
+            // === КРЕСТИКИ-НОЛИКИ ===
+            const gameBoard = document.getElementById('gameBoard');
+            const gameStatus = document.getElementById('gameStatus');
             const restartBtn = document.getElementById('restartBtn');
+            let board = ['', '', '', '', '', '', '', '', ''];
+            let currentPlayer = 'X';
+            let gameActive = true;
 
-            // Настройки игры
-            let gameRunning = false;
-            let score = 0;
-            let animationId;
+            // Обновление статуса игры
+            function updateGameStatus(message) {
+                gameStatus.textContent = message;
+            }
 
-            // Игрок
-            const player = {
-                x: 50,
-                y: canvas.height / 2 - 15,
-                radius: 15,
-                color: '#ff00ff',
-                trail: []
-            };
+            // Проверка победителя
+            function checkWinner() {
+                const winPatterns = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                    [0, 4, 8], [2, 4, 6]             // diagonals
+                ];
 
-            // Препятствия
-            let obstacles = [];
-            const obstacleColors = ['#ff5252', '#4caf50', '#2196f3', '#ff9800', '#9c27b0'];
-            const maxObstacles = 8;
+                for (let pattern of winPatterns) {
+                    const [a, b, c] = pattern;
+                    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                        return board[a];
+                    }
+                }
 
-            // Полосы радуги для фона (Nyan Cat стиль)
-            const rainbowStripes = ['#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#9900ff', '#ff00ff'];
-            let rainbowOffset = 0;
+                return board.includes('') ? null : 'draw';
+            }
 
-            // Управление
-            let keys = {};
-            window.addEventListener('keydown', (e) => {
-                keys[e.key] = true;
+            // Ход компьютера
+            function computerMove() {
+                if (!gameActive || currentPlayer !== 'O') return;
+
+                // Простая стратегия: сначала проверяем, может ли компьютер выиграть
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'O';
+                        if (checkWinner() === 'O') {
+                            makeMove(i);
+                            return;
+                        }
+                        board[i] = '';
+                    }
+                }
+
+                // Проверяем, может ли игрок выиграть, и блокируем
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === '') {
+                        board[i] = 'X';
+                        if (checkWinner() === 'X') {
+                            board[i] = '';
+                            makeMove(i);
+                            return;
+                        }
+                        board[i] = '';
+                    }
+                }
+
+                // Если центр свободен - занимаем
+                if (board[4] === '') {
+                    makeMove(4);
+                    return;
+                }
+
+                // Занимаем угол
+                const corners = [0, 2, 6, 8];
+                const availableCorners = corners.filter(i => board[i] === '');
+                if (availableCorners.length > 0) {
+                    const randomCorner = availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                    makeMove(randomCorner);
+                    return;
+                }
+
+                // Занимаем любую свободную клетку
+                const availableCells = board.map((cell, index) => cell === '' ? index : null).filter(i => i !== null);
+                if (availableCells.length > 0) {
+                    const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+                    makeMove(randomCell);
+                }
+            }
+
+            // Выполнение хода
+            function makeMove(index) {
+                if (board[index] !== '' || !gameActive) return;
+
+                board[index] = currentPlayer;
+                const cell = document.querySelector(`.cell[data-cell-index="${index}"]`);
+                cell.textContent = currentPlayer;
+                cell.classList.add(currentPlayer.toLowerCase());
+
+                const winner = checkWinner();
+                if (winner) {
+                    gameActive = false;
+                    if (winner === 'draw') {
+                        updateGameStatus(translations[currentLang].game.status.draw);
+                    } else if (winner === 'X') {
+                        updateGameStatus(translations[currentLang].game.status.win);
+                    } else {
+                        updateGameStatus(translations[currentLang].game.status.lose);
+                    }
+                    return;
+                }
+
+                // Смена игрока
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                if (currentPlayer === 'O') {
+                    updateGameStatus(translations[currentLang].game.status.computerTurn);
+                    setTimeout(computerMove, 500);
+                } else {
+                    updateGameStatus(translations[currentLang].game.status.playerTurn);
+                }
+            }
+
+            // Сброс игры
+            function resetGame() {
+                board = ['', '', '', '', '', '', '', '', ''];
+                currentPlayer = 'X';
+                gameActive = true;
+                document.querySelectorAll('.cell').forEach(cell => {
+                    cell.textContent = '';
+                    cell.classList.remove('x', 'o');
+                });
+                updateGameStatus(translations[currentLang].game.status.playerTurn);
+            }
+
+            // Обработчики событий
+            gameBoard.addEventListener('click', (e) => {
+                if (e.target.classList.contains('cell') && currentPlayer === 'X' && gameActive) {
+                    const index = parseInt(e.target.getAttribute('data-cell-index'));
+                    makeMove(index);
+                }
             });
-            window.addEventListener('keyup', (e) => {
-                keys[e.key] = false;
-            });
+
+            restartBtn.addEventListener('click', resetGame);
 
             // Инициализация игры
-            function initGame() {
-                score = 0;
-                scoreElement.textContent = score;
-                obstacles = [];
-                player.trail = [];
-                gameRunning = true;
-            }
-
-            // Создание препятствия
-            function createObstacle() {
-                if (obstacles.length >= maxObstacles) return;
-                const color = obstacleColors[Math.floor(Math.random() * obstacleColors.length)];
-                obstacles.push({
-                    x: canvas.width,
-                    y: Math.random() * (canvas.height - 40) + 20,
-                    width: 20 + Math.random() * 20,
-                    height: 20 + Math.random() * 20,
-                    speed: 3 + Math.random() * 3,
-                    color: color
-                });
-            }
-
-            // Обновление игры
-            function update() {
-                if (!gameRunning) return;
-
-                // Обновление позиции игрока
-                if (keys['ArrowUp'] || keys['w'] || keys['W']) {
-                    player.y -= 5;
-                }
-                if (keys['ArrowDown'] || keys['s'] || keys['S']) {
-                    player.y += 5;
-                }
-
-                // Ограничение движения игрока в пределах canvas
-                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
-
-                // Добавление следа
-                player.trail.push({x: player.x, y: player.y});
-                if (player.trail.length > 10) {
-                    player.trail.shift();
-                }
-
-                // Создание новых препятствий
-                if (Math.random() < 0.03) {
-                    createObstacle();
-                }
-
-                // Обновление препятствий
-                for (let i = obstacles.length - 1; i >= 0; i--) {
-                    obstacles[i].x -= obstacles[i].speed;
-                    
-                    // Удаление препятствий, вышедших за пределы
-                    if (obstacles[i].x + obstacles[i].width < 0) {
-                        obstacles.splice(i, 1);
-                        score += 10;
-                        scoreElement.textContent = score;
-                        continue;
-                    }
-
-                    // Проверка столкновения
-                    const dx = player.x - (obstacles[i].x + obstacles[i].width / 2);
-                    const dy = player.y - (obstacles[i].y + obstacles[i].height / 2);
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < player.radius + Math.max(obstacles[i].width, obstacles[i].height) / 2) {
-                        gameOver();
-                        return;
-                    }
-                }
-
-                // Обновление радужного фона
-                rainbowOffset = (rainbowOffset + 0.5) % rainbowStripes.length;
-            }
-
-            // Отрисовка игры
-            function draw() {
-                // Очистка canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Радужный фон
-                for (let i = 0; i < canvas.width; i += 10) {
-                    const stripeIndex = Math.floor((i / 10 + rainbowOffset) % rainbowStripes.length);
-                    ctx.fillStyle = rainbowStripes[stripeIndex];
-                    ctx.fillRect(i, 0, 10, canvas.height);
-                }
-
-                // Отрисовка следа игрока
-                for (let i = 0; i < player.trail.length; i++) {
-                    const alpha = i / player.trail.length;
-                    ctx.beginPath();
-                    ctx.arc(player.trail[i].x, player.trail[i].y, player.radius * alpha, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 0, 255, ${alpha * 0.5})`;
-                    ctx.fill();
-                }
-
-                // Отрисовка игрока (шарик в стиле Nyan Cat)
-                ctx.beginPath();
-                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-                ctx.fillStyle = player.color;
-                ctx.fill();
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Добавление глаз
-                ctx.beginPath();
-                ctx.arc(player.x - 5, player.y - 3, 3, 0, Math.PI * 2);
-                ctx.arc(player.x + 5, player.y - 3, 3, 0, Math.PI * 2);
-                ctx.fillStyle = '#000';
-                ctx.fill();
-
-                // Отрисовка препятствий
-                obstacles.forEach(obstacle => {
-                    ctx.fillStyle = obstacle.color;
-                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-                    
-                    // Добавление эффекта свечения
-                    ctx.shadowColor = obstacle.color;
-                    ctx.shadowBlur = 10;
-                    ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-                    ctx.shadowBlur = 0;
-                });
-            }
-
-            // Игровой цикл
-            function gameLoop() {
-                update();
-                draw();
-                if (gameRunning) {
-                    animationId = requestAnimationFrame(gameLoop);
-                }
-            }
-
-            // Завершение игры
-            function gameOver() {
-                gameRunning = false;
-                cancelAnimationFrame(animationId);
-                alert(`Игра окончена! Ваш счёт: ${score}`);
-            }
-
-            // Обработчики кнопок
-            startBtn.addEventListener('click', () => {
-                if (!gameRunning) {
-                    initGame();
-                    gameLoop();
-                }
-            });
-
-            restartBtn.addEventListener('click', () => {
-                if (gameRunning) {
-                    cancelAnimationFrame(animationId);
-                }
-                initGame();
-                gameLoop();
-            });
-
-            // Инициализация canvas размеров при изменении окна
-            function resizeCanvas() {
-                if (window.innerWidth <= 768) {
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = 300;
-                } else {
-                    canvas.width = 800;
-                    canvas.height = 400;
-                }
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+            resetGame();
         });
     </script>
 </body>
